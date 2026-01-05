@@ -1,0 +1,5 @@
+{
+  "name": "Expense Tracker",
+  "description": "A clean, beginner-friendly mobile-first expense tracking application with monthly summaries, category breakdowns, and offline-ready local storage.",
+  "requestFramePermissions": []
+}
