@@ -23,7 +23,6 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className={`flex flex-col min-h-screen ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} max-w-md mx-auto shadow-2xl relative overflow-hidden transition-colors duration-300`}>
-      {/* Header with Theme Toggle */}
       <header className={`p-4 flex justify-between items-center ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-white/50'} backdrop-blur-md sticky top-0 z-50`}>
         <span className="font-bold tracking-tight text-lg">ExpenseTracker</span>
         <button 
@@ -34,12 +33,10 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </button>
       </header>
 
-      {/* Main Content Area */}
       <main className="flex-1 pb-24 overflow-y-auto">
         {children}
       </main>
 
-      {/* Floating Action Button */}
       <Link 
         to="/add"
         className="fixed bottom-24 right-4 bg-indigo-600 text-white p-5 rounded-2xl shadow-[0_8px_30px_rgb(79,70,229,0.3)] hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95 z-50 md:right-[calc(50%-180px)]"
@@ -47,7 +44,6 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <PlusCircle size={24} />
       </Link>
 
-      {/* Bottom Navigation */}
       <nav className={`fixed bottom-0 left-0 right-0 ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} border-t px-6 py-4 flex justify-between items-center z-40 max-w-md mx-auto`}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
