@@ -27,10 +27,9 @@ const Summary: React.FC = () => {
     return { results, total };
   }, [month, year]);
 
-  // Generate SVG Pie Chart slices
   const chartSlices = useMemo(() => {
     let accumulated = 0;
-    const colors = ['#6366f1', '#f59e0b', '#3b82f6', '#ef4444', '#10b981'];
+    const colors = ['#4f46e5', '#f59e0b', '#2563eb', '#dc2626', '#059669'];
     return data.results.filter(r => r.total > 0).map((r, i) => {
       const start = accumulated;
       accumulated += r.percentage;
@@ -46,12 +45,12 @@ const Summary: React.FC = () => {
   return (
     <div className="p-5 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <header className="mb-2">
-        <h1 className="text-3xl font-black tracking-tighter">Insights</h1>
-        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-1">Detailed Analysis</p>
+        <h1 className="text-3xl font-black tracking-tighter text-slate-950 dark:text-white">Analysis</h1>
+        <p className="text-slate-600 dark:text-slate-400 font-black uppercase text-[10px] tracking-widest mt-1">Spending Breakdown</p>
       </header>
 
       {/* Visual Chart Section */}
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center">
+      <div className="bg-slate-100 dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col items-center">
         {data.total > 0 ? (
           <div className="relative w-48 h-48 mb-8">
             <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
@@ -68,7 +67,7 @@ const Summary: React.FC = () => {
                     r={radius}
                     fill="transparent"
                     stroke={s.color}
-                    strokeWidth="12"
+                    strokeWidth="14"
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
                     strokeLinecap="round"
@@ -82,24 +81,24 @@ const Summary: React.FC = () => {
               })}
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xs font-bold text-slate-400 uppercase">Total</span>
-              <span className="text-xl font-black">₹{data.total.toLocaleString('en-IN')}</span>
+              <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total</span>
+              <span className="text-xl font-black text-slate-950 dark:text-white">₹{data.total.toLocaleString('en-IN')}</span>
             </div>
           </div>
         ) : (
-          <div className="py-12 flex flex-col items-center text-slate-300">
-             <PieIcon size={64} strokeWidth={1} className="opacity-20 mb-2" />
-             <p className="text-xs font-bold uppercase tracking-widest">No spending data</p>
+          <div className="py-12 flex flex-col items-center text-slate-400">
+             <PieIcon size={64} strokeWidth={1.5} className="opacity-40 mb-2" />
+             <p className="text-xs font-black uppercase tracking-widest">Zero Data Points</p>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-2 gap-4 w-full px-2">
           {chartSlices.map((s, i) => (
             <div key={i} className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-slate-400 uppercase truncate max-w-[80px]">{s.category}</span>
-                <span className="text-xs font-black">{s.percentage.toFixed(0)}%</span>
+              <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-black text-slate-700 dark:text-slate-400 uppercase truncate">{s.category}</span>
+                <span className="text-xs font-black text-slate-950 dark:text-white">{s.percentage.toFixed(0)}%</span>
               </div>
             </div>
           ))}
@@ -107,26 +106,25 @@ const Summary: React.FC = () => {
       </div>
 
       {/* List Breakdown */}
-      <div className="space-y-3">
+      <div className="space-y-3 pb-8">
         {data.results.map((res) => (
-          <div key={res.category} className="bg-white dark:bg-slate-900 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 group hover:border-indigo-500 transition-all duration-300">
+          <div key={res.category} className="bg-white dark:bg-slate-900 p-5 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-3">
-                <div className={`w-1 h-8 rounded-full ${res.percentage > 40 ? 'bg-red-500' : 'bg-indigo-500'}`} />
+                <div className={`w-1.5 h-8 rounded-full ${res.percentage > 40 ? 'bg-rose-600' : 'bg-indigo-600'}`} />
                 <div>
-                  <h3 className="font-bold text-slate-700 dark:text-slate-200">{res.category}</h3>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{res.count} items</p>
+                  <h3 className="font-black text-slate-950 dark:text-slate-200">{res.category}</h3>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-500 font-black uppercase tracking-widest">{res.count} Transactions</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-black text-slate-900 dark:text-white text-lg">₹{res.total.toLocaleString('en-IN')}</p>
-                <p className={`text-[10px] font-black ${res.percentage > 40 ? 'text-red-400' : 'text-slate-400'}`}>{res.percentage.toFixed(1)}%</p>
+                <p className="font-black text-slate-950 dark:text-white text-lg">₹{res.total.toLocaleString('en-IN')}</p>
+                <p className={`text-[10px] font-black ${res.percentage > 40 ? 'text-rose-600' : 'text-slate-500'}`}>{res.percentage.toFixed(1)}%</p>
               </div>
             </div>
-            {/* Tiny progress bar inside list */}
-            <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
               <div 
-                className={`h-full transition-all duration-1000 ${res.percentage > 40 ? 'bg-red-400' : 'bg-indigo-400'}`}
+                className={`h-full transition-all duration-1000 ${res.percentage > 40 ? 'bg-rose-500' : 'bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.3)]'}`}
                 style={{ width: `${res.percentage}%` }}
               />
             </div>
