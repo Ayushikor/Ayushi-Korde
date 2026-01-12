@@ -1,89 +1,117 @@
 
-import React from 'react';
-import { Award, Target, HelpCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Award, Target, HelpCircle, ArrowUpRight, ArrowDownRight, Zap, Coffee, ShoppingBag, Car } from 'lucide-react';
 import { expenseService } from '../services/expenseService';
+import { Category } from '../types';
 
 const Statistics: React.FC = () => {
-  const currentTotal = expenseService.getMonthlyTotal(0);
-  const lastTotal = expenseService.getMonthlyTotal(1);
+  const now = new Date();
+  const currentTotal = expenseService.getMonthlyTotal(now.getMonth(), now.getFullYear());
+  
+  const lastMonth = new Date(now);
+  lastMonth.setMonth(now.getMonth() - 1);
+  const lastTotal = expenseService.getMonthlyTotal(lastMonth.getMonth(), lastMonth.getFullYear());
+  
   const diff = currentTotal - lastTotal;
   const percentageChange = lastTotal > 0 ? (diff / lastTotal) * 100 : 0;
-  
-  const stats = [
-    {
-      title: 'Current Month',
-      value: `₹${currentTotal.toLocaleString('en-IN')}`,
-      sub: 'This month so far',
-      icon: Target,
-      color: 'bg-indigo-500'
-    },
-    {
-      title: 'Last Month',
-      value: `₹${lastTotal.toLocaleString('en-IN')}`,
-      sub: 'Previous period total',
-      icon: Award,
-      color: 'bg-emerald-500'
+
+  const insights = useMemo(() => {
+    const list = [];
+    const currentExpenses = expenseService.getExpensesByMonth(now.getMonth(), now.getFullYear());
+    const prevExpenses = expenseService.getExpensesByMonth(lastMonth.getMonth(), lastMonth.getFullYear());
+
+    // Category Specific Logic
+    const foodCurrent = currentExpenses.filter(e => e.category === Category.FOOD).reduce((s, e) => s + e.amount, 0);
+    const foodPrev = prevExpenses.filter(e => e.category === Category.FOOD).reduce((s, e) => s + e.amount, 0);
+    
+    if (foodCurrent > foodPrev && foodPrev > 0) {
+      list.push({ text: "Food expenses increased compared to last month. 🍔", type: 'warning', icon: Coffee });
+    } else if (foodCurrent < foodPrev && foodCurrent > 0) {
+      list.push({ text: "You spent less on Food this month! Great job. 🥦", type: 'success', icon: Coffee });
     }
-  ];
+
+    const shopCurrent = currentExpenses.filter(e => e.category === Category.SHOPPING).reduce((s, e) => s + e.amount, 0);
+    if (shopCurrent > currentTotal * 0.4) {
+      list.push({ text: "Shopping is over 40% of your total spending. 📈", type: 'warning', icon: ShoppingBag });
+    }
+
+    if (currentTotal > lastTotal && lastTotal > 0) {
+      list.push({ text: "Overall spending is trending upwards. 🚀", type: 'info', icon: Target });
+    }
+
+    return list;
+  }, [currentTotal, lastTotal]);
 
   return (
-    <div className="p-5 animate-in fade-in slide-in-from-right-4 duration-300">
+    <div className="p-5 space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">Statistics</h1>
-        <p className="text-slate-500">How are you doing this month?</p>
+        <h1 className="text-3xl font-black tracking-tight">Financial Health</h1>
+        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-1">Growth & Trends</p>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 mb-8">
-        {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
-            <div className={`${stat.color} p-3 rounded-2xl text-white shadow-lg shadow-indigo-100`}>
-              <stat.icon size={24} />
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{stat.title}</p>
-              <p className="text-xl font-bold text-slate-800">{stat.value}</p>
-              <p className="text-[10px] text-slate-500">{stat.sub}</p>
-            </div>
+      {/* Main Stats Card */}
+      <div className="bg-slate-900 dark:bg-indigo-950 rounded-[2.5rem] p-7 text-white shadow-2xl relative overflow-hidden">
+        <div className="flex justify-between items-center mb-6 relative z-10">
+          <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-md">
+            <Zap size={24} className="text-yellow-400" />
           </div>
-        ))}
-      </div>
-
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-8">
-        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-          Insights
-          <HelpCircle size={16} className="text-slate-300" />
-        </h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50">
-            {diff >= 0 ? (
-              <ArrowUpRight className="text-red-500 shrink-0 mt-1" />
-            ) : (
-              <ArrowDownRight className="text-green-500 shrink-0 mt-1" />
-            )}
-            <div>
-              <p className="text-sm font-semibold text-slate-700">
-                {diff >= 0 
-                  ? `Spending is up by ${Math.abs(percentageChange).toFixed(1)}% compared to last month.` 
-                  : `Great job! Spending is down by ${Math.abs(percentageChange).toFixed(1)}% compared to last month.`}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                {diff >= 0 
-                  ? "Try checking your 'Shopping' or 'Other' categories to see where you can save." 
-                  : "You're doing better than last month. Keep it up!"}
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl border-2 border-dashed border-slate-100 text-center">
-            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-1">Daily Average</p>
-            <p className="text-2xl font-bold text-slate-800">₹{(currentTotal / new Date().getDate()).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
+          <div className="text-right">
+             <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Avg Daily</span>
+             <p className="font-black text-xl">₹{(currentTotal / now.getDate()).toFixed(0)}</p>
           </div>
         </div>
+        
+        <div className="space-y-1 relative z-10">
+          <span className="text-xs font-bold uppercase opacity-60 tracking-widest">Growth since last month</span>
+          <div className="flex items-center gap-2">
+            <p className="text-4xl font-black">{Math.abs(percentageChange).toFixed(1)}%</p>
+            {diff >= 0 ? <ArrowUpRight className="text-red-400" size={32} strokeWidth={3} /> : <ArrowDownRight className="text-green-400" size={32} strokeWidth={3} />}
+          </div>
+          <p className="text-xs opacity-70 font-medium">Compared to last month's ₹{lastTotal.toLocaleString('en-IN')}</p>
+        </div>
+
+        <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="p-4 bg-indigo-50 rounded-2xl text-center">
-        <p className="text-xs text-indigo-600 font-medium">Tip: Track every expense, no matter how small, to get the most accurate insights!</p>
+      {/* Smart Insights */}
+      <div className="space-y-4">
+        <h3 className="font-black text-lg tracking-tight flex items-center gap-2">
+          Smart Insights
+          <div className="h-1.5 w-1.5 bg-indigo-500 rounded-full animate-ping" />
+        </h3>
+        
+        {insights.length === 0 ? (
+          <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] text-center border border-dashed border-slate-200 dark:border-slate-800">
+            <p className="text-sm text-slate-400 font-bold">Collecting more data for insights...</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {insights.map((insight, i) => (
+              <div key={i} className={`p-5 rounded-[2rem] flex gap-4 items-start shadow-sm border ${
+                insight.type === 'warning' ? 'bg-red-50 dark:bg-red-950/30 border-red-100 dark:border-red-900/50' : 
+                insight.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/50' :
+                'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-100 dark:border-indigo-900/50'
+              }`}>
+                <div className={`p-2 rounded-xl shrink-0 ${
+                  insight.type === 'warning' ? 'bg-red-100 text-red-600' : 
+                  insight.type === 'success' ? 'bg-emerald-100 text-emerald-600' :
+                  'bg-indigo-100 text-indigo-600'
+                }`}>
+                  <insight.icon size={20} />
+                </div>
+                <p className="text-sm font-bold leading-relaxed py-1">{insight.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Tip of the day */}
+      <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-[2rem] text-white shadow-lg">
+        <h4 className="font-black text-xs uppercase tracking-widest mb-2 opacity-80">Pro Tip</h4>
+        <p className="text-sm font-bold italic leading-relaxed">
+          "The fastest way to reach your budget goal is to cut down on small recurring 'Other' expenses."
+        </p>
       </div>
     </div>
   );

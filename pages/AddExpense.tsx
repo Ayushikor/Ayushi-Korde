@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save } from 'lucide-react';
+import { ChevronLeft, Save, Sparkles } from 'lucide-react';
 import { Category } from '../types';
 import { expenseService } from '../services/expenseService';
 
@@ -53,45 +53,49 @@ const AddExpense: React.FC = () => {
   };
 
   return (
-    <div className="p-5 animate-in slide-in-from-bottom-4 duration-300">
-      <header className="flex items-center gap-4 mb-8">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-600">
-          <ChevronLeft size={24} />
+    <div className="p-6 space-y-8 animate-in slide-in-from-bottom-6 duration-500">
+      <header className="flex items-center gap-4">
+        <button onClick={() => navigate(-1)} className="p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-transform active:scale-90">
+          <ChevronLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-slate-800">{id ? 'Edit Expense' : 'Add Expense'}</h1>
+        <div>
+          <h1 className="text-2xl font-black tracking-tight">{id ? 'Edit Entry' : 'New Entry'}</h1>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Transaction Details</p>
+        </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Amount Input */}
-        <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Amount</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+      <form onSubmit={handleSubmit} className="space-y-8 pb-12">
+        {/* Large Amount Input */}
+        <div className="text-center space-y-2">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Enter Amount</label>
+          <div className="relative inline-block w-full">
+            <span className="absolute left-1/2 -translate-x-[90px] top-1/2 -translate-y-1/2 text-3xl font-black text-indigo-500">₹</span>
             <input 
               type="number" 
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-10 pr-4 text-2xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
+              placeholder="0"
+              className="w-full bg-transparent text-center text-6xl font-black text-slate-900 dark:text-white focus:outline-none placeholder-slate-200 dark:placeholder-slate-800 transition-all"
               required
+              autoFocus
             />
           </div>
         </div>
 
         {/* Category Picker */}
-        <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Category</label>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Select Category</label>
           <div className="grid grid-cols-2 gap-3">
             {Object.values(Category).map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setCategory(cat)}
-                className={`py-3 px-4 rounded-xl text-sm font-semibold border transition-all ${
+                className={`py-4 px-4 rounded-[1.5rem] text-sm font-bold border transition-all duration-300 transform ${
                   category === cat 
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' 
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xl scale-[1.02]' 
+                  : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-100 dark:border-slate-800 hover:border-indigo-300'
                 }`}
               >
                 {cat}
@@ -100,36 +104,38 @@ const AddExpense: React.FC = () => {
           </div>
         </div>
 
-        {/* Date Picker */}
-        <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Date</label>
-          <input 
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-2xl py-4 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
-            required
-          />
+        <div className="grid grid-cols-1 gap-6">
+          {/* Date Picker */}
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">When?</label>
+            <input 
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] py-4 px-6 text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+              required
+            />
+          </div>
+
+          {/* Note Input */}
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">What for?</label>
+            <textarea 
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Added some notes here..."
+              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] py-4 px-6 text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm h-28 resize-none"
+            />
+          </div>
         </div>
 
-        {/* Note Input */}
-        <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Note (Optional)</label>
-          <textarea 
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="What was this for?"
-            className="w-full bg-white border border-slate-200 rounded-2xl py-4 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm h-24"
-          />
-        </div>
-
-        {/* Action Button */}
+        {/* Save Button */}
         <button 
           type="submit"
-          className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-indigo-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+          className="w-full bg-indigo-600 text-white py-5 rounded-[2rem] font-black text-lg shadow-[0_15px_40px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
         >
-          <Save size={20} />
-          {id ? 'Save Changes' : 'Add Expense'}
+          {id ? <Save size={24} /> : <Sparkles size={24} />}
+          {id ? 'Update Record' : 'Record Expense'}
         </button>
       </form>
     </div>

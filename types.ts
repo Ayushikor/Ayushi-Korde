@@ -22,3 +22,9 @@ export interface CategoryBreakdown {
   percentage: number;
   count: number;
 }
+
+export interface Budget {
+  month: number; // 0-11
+  year: number;
+  amount: number;
+}
