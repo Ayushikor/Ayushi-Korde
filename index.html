@@ -1,34 +1,31 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Expense Tracker Pro</title>
+    <meta name="description" content="Manage your expenses with ease offline.">
+    <meta name="theme-color" content="#4f46e5">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-          --app-bg-light: #f8fafc;
-          --app-bg-dark: #020617;
-          --card-bg-light: #ffffff;
-          --card-bg-dark: #0f172a;
-          --text-primary-light: #0f172a;
+          --app-bg-light: #ffffff;
+          --app-bg-dark: #0f172a;
+          --text-primary-light: #020617;
           --text-primary-dark: #f8fafc;
-          --text-secondary-light: #64748b;
-          --text-secondary-dark: #94a3b8;
-          --accent: #6366f1;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: contain;
             background-color: var(--app-bg-light);
             color: var(--text-primary-light);
             transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior-y: none;
         }
 
         .dark body {
@@ -36,31 +33,12 @@
             color: var(--text-primary-dark);
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Better input visibility */
-        input::placeholder {
-            color: var(--text-secondary-light);
-            opacity: 0.5;
-        }
-        .dark input::placeholder {
-            color: var(--text-secondary-dark);
-            opacity: 0.5;
-        }
-
-        /* Fix for mobile autofill/dark mode input backgrounds */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus {
+        input:-webkit-autofill {
           -webkit-text-fill-color: inherit !important;
           -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-          transition: background-color 5000s ease-in-out 0s !important;
         }
     </style>
     <script>
@@ -69,9 +47,7 @@
         theme: {
           extend: {
             colors: {
-              slate: {
-                950: '#020617',
-              }
+              slate: { 950: '#020617' }
             }
           }
         }
@@ -86,12 +62,13 @@
     "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "vite-plugin-pwa": "https://esm.sh/vite-plugin-pwa@^1.2.0"
   }
 }
 </script>
 </head>
-<body>
+<body class="antialiased">
     <div id="root"></div>
     <script type="module" src="./main.tsx"></script>
 </body>
