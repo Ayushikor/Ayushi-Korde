@@ -1,13 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save, Sparkles } from 'lucide-react';
+import { ChevronLeft, Save, Sparkles, Calendar, Type, CreditCard } from 'lucide-react';
 import { Category } from '../types';
 import { expenseService } from '../services/expenseService';
+import { useTheme } from '../App';
 
 const AddExpense: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<Category>(Category.OTHER);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -54,48 +55,52 @@ const AddExpense: React.FC = () => {
 
   return (
     <div className="p-6 space-y-8 animate-in slide-in-from-bottom-6 duration-500">
-      <header className="flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="p-3 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-transform active:scale-90">
-          <ChevronLeft size={20} />
+      <header className="flex items-center gap-5">
+        <button onClick={() => navigate(-1)} className="p-3.5 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 transition-transform active:scale-90 text-slate-500 dark:text-slate-100">
+          <ChevronLeft size={22} />
         </button>
         <div>
-          <h1 className="text-2xl font-black tracking-tight">{id ? 'Edit Entry' : 'New Entry'}</h1>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Transaction Details</p>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">{id ? 'Edit' : 'New'} Record</h1>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Expense details</p>
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-8 pb-12">
-        {/* Large Amount Input */}
-        <div className="text-center space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Enter Amount</label>
-          <div className="relative inline-block w-full">
-            <span className="absolute left-1/2 -translate-x-[90px] top-1/2 -translate-y-1/2 text-3xl font-black text-indigo-500">₹</span>
+      <form onSubmit={handleSubmit} className="space-y-10 pb-12">
+        {/* The Giant Amount Input - Fixed Visibility */}
+        <div className="text-center space-y-4 py-6 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
+          <label className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">Amount Spent</label>
+          <div className="flex items-center justify-center px-4">
+            <span className="text-4xl font-black text-indigo-500 mr-2">₹</span>
             <input 
               type="number" 
+              inputMode="decimal"
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="0"
-              className="w-full bg-transparent text-center text-6xl font-black text-slate-900 dark:text-white focus:outline-none placeholder-slate-200 dark:placeholder-slate-800 transition-all"
+              placeholder="0.00"
+              className="w-full max-w-[200px] bg-transparent text-center text-6xl font-black text-slate-900 dark:text-white outline-none placeholder:text-slate-200 dark:placeholder:text-slate-800/60"
               required
               autoFocus
             />
           </div>
         </div>
 
-        {/* Category Picker */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Select Category</label>
+        {/* Category Selector */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 px-1">
+            <CreditCard size={14} className="text-indigo-500" />
+            <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Category</label>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             {Object.values(Category).map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setCategory(cat)}
-                className={`py-4 px-4 rounded-[1.5rem] text-sm font-bold border transition-all duration-300 transform ${
+                className={`py-4 px-4 rounded-2xl text-sm font-bold border transition-all duration-300 flex items-center justify-center gap-2 ${
                   category === cat 
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xl scale-[1.02]' 
-                  : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-100 dark:border-slate-800 hover:border-indigo-300'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xl scale-[1.03]' 
+                  : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800'
                 }`}
               >
                 {cat}
@@ -104,38 +109,44 @@ const AddExpense: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          {/* Date Picker */}
-          <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">When?</label>
+        <div className="space-y-6">
+          {/* Date Selector */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 px-1">
+              <Calendar size={14} className="text-indigo-500" />
+              <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Date</label>
+            </div>
             <input 
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] py-4 px-6 text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl py-4 px-6 text-slate-800 dark:text-white font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm appearance-none"
               required
             />
           </div>
 
-          {/* Note Input */}
-          <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">What for?</label>
+          {/* Notes Input */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 px-1">
+              <Type size={14} className="text-indigo-500" />
+              <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Note</label>
+            </div>
             <textarea 
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Added some notes here..."
-              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] py-4 px-6 text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm h-28 resize-none"
+              placeholder="What was this for? (optional)"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl py-4 px-6 text-slate-800 dark:text-white font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm h-32 resize-none placeholder:text-slate-300 dark:placeholder:text-slate-700"
             />
           </div>
         </div>
 
-        {/* Save Button */}
+        {/* Action Button */}
         <button 
           type="submit"
-          className="w-full bg-indigo-600 text-white py-5 rounded-[2rem] font-black text-lg shadow-[0_15px_40px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3"
+          className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black text-lg shadow-[0_20px_50px_rgba(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4"
         >
-          {id ? <Save size={24} /> : <Sparkles size={24} />}
-          {id ? 'Update Record' : 'Record Expense'}
+          {id ? <Save size={22} strokeWidth={2.5} /> : <Sparkles size={22} strokeWidth={2.5} />}
+          <span className="uppercase tracking-widest">{id ? 'Update Entry' : 'Add Record'}</span>
         </button>
       </form>
     </div>
