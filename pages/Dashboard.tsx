@@ -56,10 +56,10 @@ const Dashboard: React.FC = () => {
   }, [expenses, searchQuery, categoryFilter]);
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Delete this transaction?')) {
-      expenseService.deleteExpense(id);
-      loadData();
-    }
+    // Optimistic UI update: Remove from state immediately for instant feedback
+    setExpenses(prev => prev.filter(e => e.id !== id));
+    // Persist deletion to local storage
+    expenseService.deleteExpense(id);
   };
 
   const handleSetBudget = () => {
